@@ -122,4 +122,20 @@ class ProductController extends Controller
         $product->delete();
         return redirect()->route('products.index')->with('success', 'Data Berhasil Dihapus!');
     }
+
+    public function printPdf()
+    {
+        $products = \App\Models\Product::all(); // Pastikan model Product sudah di-use
+        $data = [
+            'title' => 'Daftar Produk',
+            'date' => date('d/m/Y'),
+            'products' => $products
+        ];
+
+        // Sesuaikan path view jika Anda ingin menempatkan file PDF di subfolder
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('products/productpdf', $data); // Asumsi file di views/productpdf.blade.php
+        $pdf->setPaper('A4', 'landscape');
+
+        return $pdf->stream('Data_Produk.pdf', ["Attachment" => false]);
+    }
 }

@@ -69,4 +69,20 @@ class CategoryController extends Controller
         $category->delete();
         return redirect()->route('categories.index')->with('success', 'Category deleted.');
     }
+
+    public function printPdf()
+    {
+        $categories = \App\Models\Category::all(); // Pastikan model Category sudah di-use
+        $data = [
+            'title' => 'Daftar Kategori Produk',
+            'date' => date('d/m/Y'),
+            'categories' => $categories
+        ];
+
+        // Sesuaikan path view jika Anda ingin menempatkan file PDF di subfolder
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('categories/categorypdf', $data); // Asumsi file di views/categorypdf.blade.php
+        $pdf->setPaper('A4', 'portrait');
+
+        return $pdf->stream('Data_Kategori.pdf', ["Attachment" => false]);
+    }
 }
